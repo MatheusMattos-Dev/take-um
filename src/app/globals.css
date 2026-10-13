@@ -1,0 +1,247 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+  --font-display:
+    var(--font-barlow-condensed), "Arial Narrow", ui-sans-serif, sans-serif;
+}
+
+@theme {
+  --color-ink: #0d0d0f;
+  --color-ink-card: #17171b;
+  --color-ink-line: #2a2a30;
+  --color-paper: #f5f2ec;
+  --color-paper-dim: #e9e4da;
+  --color-rec: #ff3b30;
+  --color-flash: #ffb020;
+  --color-whats: #25d366;
+
+  --radius-card: 14px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-rec: rec-blink 1.4s ease-in-out infinite;
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-ring: ring 2.8s ease-out infinite;
+  --animate-progress: progress 3.2s linear infinite;
+  --animate-like: like-pulse 2.6s var(--ease-out-expo) infinite;
+  --animate-heart: heart-rise 2.6s ease-out infinite;
+
+  @keyframes rec-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes ring {
+    0% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    70%,
+    100% {
+      opacity: 0;
+      transform: scale(1.7);
+    }
+  }
+
+  @keyframes progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes like-pulse {
+    0%,
+    24%,
+    100% {
+      transform: scale(1);
+    }
+    8% {
+      transform: scale(1.35);
+    }
+    16% {
+      transform: scale(0.94);
+    }
+  }
+
+  @keyframes heart-rise {
+    0% {
+      opacity: 0;
+      transform: translate(0, 0) scale(0.5);
+    }
+    12% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--drift, 0), -430%) scale(1.15);
+    }
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-ink);
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    scrollbar-gutter: stable;
+  }
+
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: var(--color-rec);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-rec);
+    outline-offset: 3px;
+  }
+}
+
+/* Legenda estilo Reels: a palavra ativa ganha fundo amarelo. A camada
+   destacada fica em ::after para animar só opacity. */
+.caption-word {
+  position: relative;
+  display: inline-block;
+  padding: 0.04em 0.2em;
+}
+
+.caption-word::after {
+  content: attr(data-word);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 0.2em;
+  background: var(--color-flash);
+  color: var(--color-ink);
+  opacity: 0;
+  animation: caption-pop 3.2s linear infinite;
+  animation-delay: calc(var(--i, 0) * 0.42s);
+}
+
+@keyframes caption-pop {
+  0%,
+  17%,
+  100% {
+    opacity: 0;
+  }
+  2%,
+  14% {
+    opacity: 1;
+  }
+}
+
+/* Malha de pontinhos: some devagar em cima, embaixo e nas laterais. */
+.dot-grid-fade {
+  mask-image:
+    linear-gradient(180deg, transparent, black 30%, black 70%, transparent),
+    linear-gradient(90deg, transparent, black 14%, black 86%, transparent);
+  mask-composite: intersect;
+}
+
+/* Banner do rodapé: as bordas se dissolvem no fundo, sem moldura. */
+.banner-fade {
+  mask-image:
+    linear-gradient(90deg, transparent, black 4%, black 96%, transparent),
+    linear-gradient(180deg, transparent, black 8%, black 92%, transparent);
+  mask-composite: intersect;
+}
+
+/* Modal de vídeo 9:16: cabe na altura e na largura de qualquer tela. */
+.video-shell {
+  width: min(100vw - 2rem, 76dvh * 9 / 16, 26rem);
+}
+
+.video-dialog[open] {
+  animation: dialog-in 0.4s var(--ease-out-expo);
+}
+
+.video-dialog::backdrop {
+  background: rgb(13 13 15 / 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.video-dialog[open]::backdrop {
+  animation: backdrop-in 0.3s ease-out;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .caption-word[data-key]::after {
+    opacity: 1;
+    animation: none !important;
+  }
+}
