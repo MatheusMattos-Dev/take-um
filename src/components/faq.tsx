@@ -1,33 +1,36 @@
+import { ChatCircle } from "@phosphor-icons/react/ssr";
 import { MENSAGENS, whatsappLink } from "@/config/site";
 import { FaqList } from "@/components/faq-list";
 import { ButtonLink } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
-import { Section, SectionLabel, SectionTitle } from "@/components/ui/section";
+import { SectionTitle, container } from "@/components/ui/section";
 
+// Continua no mesmo fundo dos depoimentos, separado só por um fio.
 export function FaqSection() {
   return (
-    <Section id="duvidas" tone="light">
-      <div className="grid gap-12 lg:grid-cols-[0.8fr_1.5fr] lg:gap-16">
-        <Reveal className="lg:sticky lg:top-28 lg:self-start">
-          <SectionLabel tone="light">Dúvidas</SectionLabel>
-          <SectionTitle>Perguntas antes do primeiro take</SectionTitle>
-          <p className="mt-6 max-w-[38ch] text-lg leading-relaxed text-ink/70">
-            Não achou a sua? Mande no WhatsApp que a gente responde.
-          </p>
-          <ButtonLink
-            href={whatsappLink(MENSAGENS.duvida)}
-            variant="outline-light"
-            size="md"
-            className="mt-7"
-          >
-            Tirar uma dúvida
-          </ButtonLink>
-        </Reveal>
+    <section id="duvidas" className="bg-paper text-ink">
+      <div className={`${container} pb-20 sm:pb-24 lg:pb-32`}>
+        <div className="grid gap-10 border-t border-ink/10 pt-16 lg:grid-cols-[1fr_1.6fr] lg:gap-12 lg:pt-24">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <SectionTitle className="max-w-[12ch]">
+              Perguntas antes do primeiro take
+            </SectionTitle>
+            <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-graphite">
+              Não achou a sua? Mande no WhatsApp que a gente responde.
+            </p>
+            <ButtonLink
+              href={whatsappLink(MENSAGENS.duvida)}
+              variant="outline"
+              size="md"
+              className="mt-6"
+            >
+              <ChatCircle aria-hidden weight="bold" className="size-5" />
+              Perguntar no WhatsApp
+            </ButtonLink>
+          </div>
 
-        <Reveal>
           <FaqList />
-        </Reveal>
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }

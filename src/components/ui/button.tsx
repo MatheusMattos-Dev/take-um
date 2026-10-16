@@ -1,23 +1,22 @@
 import type { ComponentProps } from "react";
 
-type Variant = "rec" | "ink" | "outline-dark" | "outline-light";
+type Variant = "rec" | "ink" | "paper" | "outline";
 type Size = "md" | "lg";
 
+// Retangular, como a barra de ação dos anúncios em vídeo.
 const base =
-  "inline-flex items-center justify-center gap-2.5 rounded-full font-display font-extrabold uppercase leading-none tracking-[0.04em] transition-[transform,background-color,border-color] duration-300 ease-out-expo hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]";
+  "inline-flex items-center justify-center gap-2.5 rounded-control font-semibold leading-none transition-[background-color,border-color] duration-200 active:scale-[0.98]";
 
 const variants: Record<Variant, string> = {
-  rec: "bg-rec text-ink hover:bg-[#ff5449]",
-  ink: "bg-ink text-paper hover:bg-ink-line",
-  "outline-dark":
-    "border border-paper/30 text-paper hover:border-paper hover:bg-paper/5",
-  "outline-light":
-    "border border-ink/30 text-ink hover:border-ink hover:bg-ink/5",
+  rec: "bg-rec text-ink hover:bg-[#ff5047]",
+  ink: "bg-ink text-paper hover:bg-[#2a2a2a]",
+  paper: "bg-paper text-ink hover:bg-mist",
+  outline: "border-[1.5px] border-current/35 hover:border-current",
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-11 px-5 text-[1.05rem]",
-  lg: "h-14 px-7 text-xl",
+  md: "h-11 px-4 text-[0.9375rem]",
+  lg: "h-14 px-6 text-[1.0625rem]",
 };
 
 type ButtonLinkProps = ComponentProps<"a"> & {

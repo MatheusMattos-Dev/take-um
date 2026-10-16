@@ -1,18 +1,21 @@
-import { Reveal } from "@/components/ui/reveal";
-import { Section, SectionLabel, SectionTitle } from "@/components/ui/section";
+import { Section, SectionTitle } from "@/components/ui/section";
 
+// Os passos se dividem em duas fases: o que acontece com o cliente e o que
+// a equipe produz no prazo de 48h. A linha vermelha marca esse prazo.
 const STEPS = [
   {
     title: "Briefing",
     text: "Você envia pelo WhatsApp o produto, o público e o objetivo do vídeo.",
+    phase: "Com você, pelo WhatsApp",
   },
   {
     title: "Roteiro",
-    text: "Criamos um roteiro de vendas, com gancho forte nos 3 primeiros segundos, para sua aprovação.",
+    text: "Criamos um roteiro de vendas, com gancho forte nos 3 primeiros segundos, para você aprovar.",
   },
   {
     title: "Gravação",
     text: "O ator, avatar ou animação que você escolheu dá vida ao roteiro.",
+    phase: "Até 48h úteis depois do roteiro aprovado",
   },
   {
     title: "Entrega",
@@ -22,47 +25,49 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <Section id="como-funciona" tone="dim" dots>
-      <div className="grid gap-12 lg:grid-cols-[0.8fr_1.5fr] lg:gap-16">
-        <Reveal className="lg:sticky lg:top-28 lg:self-start">
-          <SectionLabel tone="light">Como funciona</SectionLabel>
-          <SectionTitle>Do briefing ao vídeo pronto em 4 passos</SectionTitle>
-          <p className="mt-6 max-w-[36ch] text-xl font-medium leading-relaxed text-ink/90">
-            Tudo acontece pelo WhatsApp. Você aprova o roteiro antes de
-            qualquer gravação.
-          </p>
-        </Reveal>
-
-        <ol className="grid gap-4 sm:grid-cols-2 sm:gap-5 sm:pb-10">
-          {STEPS.map((step, index) => (
-            <Reveal
-              as="li"
-              key={step.title}
-              delay={index * 0.08}
-              className="sm:even:translate-y-10"
-            >
-              {/* celular: número à esquerda e texto ao lado; a partir do
-                  tablet o número fica em cima, grande */}
-              <div className="flex h-full gap-5 rounded-card bg-paper p-6 transition-transform duration-300 ease-out-expo hover:-translate-y-1.5 sm:block sm:p-7 lg:p-9">
-                <span
-                  aria-hidden
-                  className="block w-[4.25rem] shrink-0 font-display text-[4rem] font-black leading-[0.8] text-rec sm:w-auto sm:text-[5.5rem]"
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <h3 className="font-display text-[1.75rem] font-black uppercase leading-none sm:mt-7 sm:text-[2rem]">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 leading-relaxed text-ink/70 sm:mt-3">
-                    {step.text}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
+    <Section id="como-funciona" tone="paper">
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-12">
+        <SectionTitle className="max-w-[16ch]">
+          Do briefing ao vídeo pronto
+        </SectionTitle>
+        <p className="max-w-[40ch] text-[1.0625rem] leading-relaxed text-graphite lg:justify-self-end">
+          Tudo acontece pelo WhatsApp. Você aprova o roteiro antes de qualquer
+          gravação.
+        </p>
       </div>
+
+      <ol className="mt-14 grid lg:mt-24 lg:grid-cols-4">
+        {STEPS.map((step, index) => {
+          const production = index >= 2;
+
+          return (
+            <li
+              key={step.title}
+              className={`relative border-l-2 pb-10 pl-5 last:pb-0 lg:border-l-0 lg:border-t-2 lg:pb-0 lg:pl-0 lg:pr-8 lg:pt-6 ${
+                production ? "border-rec" : "border-ink/15"
+              }`}
+            >
+              {step.phase && (
+                <p className="mb-4 text-sm font-semibold lg:absolute lg:-top-9 lg:left-0 lg:mb-0">
+                  {step.phase}
+                </p>
+              )}
+              <span
+                aria-hidden
+                className="type-display block text-[2.25rem] text-graphite"
+              >
+                {index + 1}
+              </span>
+              <h3 className="mt-3 text-[1.375rem] font-semibold leading-tight">
+                {step.title}
+              </h3>
+              <p className="mt-2 max-w-[34ch] leading-relaxed text-graphite">
+                {step.text}
+              </p>
+            </li>
+          );
+        })}
+      </ol>
     </Section>
   );
 }

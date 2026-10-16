@@ -2,191 +2,106 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "motion/react";
 import {
-  ArrowDown,
-  ArrowUpRight,
   FilmSlate,
   Play,
+  Plus,
   WarningCircle,
   X,
 } from "@phosphor-icons/react";
 import {
-  MENSAGENS,
   PORTFOLIO,
   TIPO_LABEL,
+  formatoMensagem,
   whatsappLink,
   type PortfolioVideo,
   type VideoTipo,
 } from "@/config/site";
 import { ButtonLink } from "@/components/ui/button";
 
-type Filter = "todos" | VideoTipo;
 type Item = PortfolioVideo & { id: number };
-
-const FILTERS: { id: Filter; label: string }[] = [
-  { id: "todos", label: "Todos" },
-  { id: "atores", label: TIPO_LABEL.atores },
-  { id: "avatar", label: TIPO_LABEL.avatar },
-  { id: "3d", label: TIPO_LABEL["3d"] },
-];
 
 const ITEMS: Item[] = PORTFOLIO.map((video, id) => ({ ...video, id }));
 
-const spring = { type: "spring", stiffness: 260, damping: 30 } as const;
-
-// O bloco "mais perfis" ocupa as colunas que sobram na última linha:
-// o índice é o resto da divisão dos cards visíveis pelas colunas da grade.
-// No celular a grade abre com os primeiros vídeos e um botão "ver todos",
-// para a página não ficar longa demais antes dos planos.
-const MOBILE_LIMIT = 6;
-
-const CTA_SPAN_MOBILE = ["col-span-2", "col-span-1"];
-const CTA_SPAN_DESKTOP = [
-  "lg:col-span-4",
-  "lg:col-span-3",
-  "lg:col-span-2",
-  "lg:col-span-1",
+const FORMATS: {
+  tipo: VideoTipo;
+  text: string;
+  ideal: string;
+  pedido: string;
+}[] = [
+  {
+    tipo: "atores",
+    text: "Pessoas reais do nosso elenco apresentam seu produto com naturalidade, olhando para a câmera.",
+    ideal: "Ideal para confiança e prova social.",
+    pedido: "Pedir vídeo com atores",
+  },
+  {
+    tipo: "avatar",
+    text: "Apresentador digital realista, com dublagem. Mais ágil e mais barato para testar vários ganchos.",
+    ideal: "Ideal para escala de anúncios.",
+    pedido: "Pedir vídeo com avatar",
+  },
+  {
+    tipo: "3d",
+    text: "Seu produto ou mascote ganha vida em estilo cinema de animação.",
+    ideal: "Ideal para viralizar e se destacar.",
+    pedido: "Pedir animação 3D",
+  },
 ];
 
 function exampleMessage(video: PortfolioVideo) {
   return `Olá! Quero ver um exemplo de vídeo: ${TIPO_LABEL[video.tipo]} (${video.subtitulo}).`;
 }
 
+// No celular cada formato vira uma faixa que desliza para o lado, como os
+// Stories; a partir do desktop os vídeos quebram em linhas de quatro.
+const strip =
+  "scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 px-4 pb-1 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-4 lg:gap-x-4 lg:gap-y-8 lg:overflow-visible lg:px-0 lg:pb-0";
+const stripItem = "w-[42%] shrink-0 snap-start sm:w-[28%] lg:w-auto";
+
 export function PortfolioGallery() {
-  const [filter, setFilter] = useState<Filter>("todos");
   const [active, setActive] = useState<Item | null>(null);
-  const [expanded, setExpanded] = useState(false);
-
-  const visible =
-    filter === "todos" ? ITEMS : ITEMS.filter((item) => item.tipo === filter);
-
-  const collapsed = !expanded && visible.length > MOBILE_LIMIT;
-  const mobileCount = collapsed ? MOBILE_LIMIT : visible.length;
 
   return (
     <>
-      <div
-        role="group"
-        aria-label="Filtrar vídeos por formato"
-        className="flex flex-wrap gap-2"
-      >
-        {FILTERS.map((option) => {
-          const selected = option.id === filter;
+      <div className="mt-12 space-y-12 lg:mt-20 lg:space-y-16">
+        {FORMATS.map((format) => {
+          const items = ITEMS.filter((item) => item.tipo === format.tipo);
+          const headingId = `formato-${format.tipo}`;
 
           return (
-            <button
-              key={option.id}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => setFilter(option.id)}
-              className={`relative h-11 rounded-full border px-5 font-display text-lg font-extrabold uppercase leading-none tracking-[0.04em] transition-colors duration-300 active:scale-[0.97] ${
-                selected
-                  ? "border-transparent text-ink"
-                  : "border-ink-line text-paper/75 hover:border-paper/50 hover:text-paper"
-              }`}
+            <section
+              key={format.tipo}
+              aria-labelledby={headingId}
+              className="grid gap-6 border-t border-paper/15 pt-7 lg:grid-cols-[15rem_1fr] lg:gap-12 lg:pt-9 xl:grid-cols-[17rem_1fr]"
             >
-              {selected && (
-                <motion.span
-                  layoutId="portfolio-filter"
-                  transition={spring}
-                  className="absolute inset-0 rounded-full bg-paper"
-                />
-              )}
-              <span className="relative">{option.label}</span>
-            </button>
+              <div>
+                <h3
+                  id={headingId}
+                  className="type-display text-[1.875rem] lg:text-[2rem]"
+                >
+                  {TIPO_LABEL[format.tipo]}
+                </h3>
+                <p className="mt-3 max-w-[38ch] leading-relaxed text-paper/70">
+                  {format.text}
+                </p>
+                <p className="mt-3 font-semibold">{format.ideal}</p>
+              </div>
+
+              <ul className={strip}>
+                {items.map((item) => (
+                  <li key={item.id} className={stripItem}>
+                    <VideoCard item={item} onOpen={() => setActive(item)} />
+                  </li>
+                ))}
+                <li className={stripItem}>
+                  <OpenSlot tipo={format.tipo} label={format.pedido} />
+                </li>
+              </ul>
+            </section>
           );
         })}
       </div>
-
-      {visible.length === 0 ? (
-        <div className="mt-8 flex flex-col items-start gap-4 rounded-card border border-dashed border-ink-line p-8 sm:p-12">
-          <FilmSlate aria-hidden weight="bold" className="size-9 text-rec" />
-          <p className="font-display text-3xl font-black uppercase leading-none">
-            Ainda sem vídeos neste formato
-          </p>
-          <p className="max-w-[46ch] leading-relaxed text-paper/70">
-            Os exemplos deste formato ainda não estão publicados aqui. Peça
-            pelo WhatsApp e enviamos para você.
-          </p>
-          <ButtonLink
-            href={whatsappLink(
-              filter === "todos"
-                ? "Olá! Quero ver exemplos de vídeos da Take Um."
-                : `Olá! Quero ver exemplos de vídeos no formato ${TIPO_LABEL[filter]}.`,
-            )}
-            size="md"
-          >
-            Pedir exemplos
-          </ButtonLink>
-        </div>
-      ) : (
-        <ul className="relative mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-          <AnimatePresence initial={false} mode="popLayout">
-            {visible.map((item, index) => (
-              <motion.li
-                key={item.id}
-                layout="position"
-                initial={{ opacity: 0, scale: 0.94 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                transition={spring}
-                className={
-                  collapsed && index >= MOBILE_LIMIT ? "max-lg:hidden" : undefined
-                }
-              >
-                <VideoCard item={item} onOpen={() => setActive(item)} />
-              </motion.li>
-            ))}
-            {collapsed && (
-              <motion.li
-                key="ver-todos"
-                layout="position"
-                transition={spring}
-                className="col-span-2 lg:hidden"
-              >
-                <button
-                  type="button"
-                  onClick={() => setExpanded(true)}
-                  className="flex h-14 w-full items-center justify-center gap-2.5 rounded-full border border-paper/30 font-display text-xl font-extrabold uppercase leading-none tracking-[0.04em] text-paper transition-[transform,border-color] duration-300 ease-out-expo hover:border-paper active:scale-[0.98]"
-                >
-                  Ver todos os {visible.length} vídeos
-                  <ArrowDown aria-hidden weight="bold" className="size-5" />
-                </button>
-              </motion.li>
-            )}
-            <motion.li
-              key="mais-perfis"
-              layout="position"
-              transition={spring}
-              className={`flex ${CTA_SPAN_MOBILE[mobileCount % 2]} ${CTA_SPAN_DESKTOP[visible.length % 4]}`}
-            >
-              <a
-                href={whatsappLink(MENSAGENS.perfis)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group @container flex min-h-48 w-full flex-col justify-between gap-6 rounded-card bg-rec p-4 text-ink transition-transform duration-300 ease-out-expo hover:-translate-y-1.5 focus-visible:outline-paper active:scale-[0.98] sm:p-7"
-              >
-                <span className="grid size-11 place-items-center rounded-full bg-ink text-paper transition-transform duration-300 ease-out-expo group-hover:rotate-45 sm:size-14">
-                  <ArrowUpRight
-                    aria-hidden
-                    weight="bold"
-                    className="size-5 sm:size-6"
-                  />
-                </span>
-                <span className="block">
-                  <span className="block text-balance font-display text-[clamp(1.5rem,11.5cqw,6.5rem)] font-black uppercase leading-[0.9]">
-                    Nosso elenco está sempre crescendo
-                  </span>
-                  <span className="mt-3 block font-display text-base font-extrabold uppercase leading-tight tracking-[0.04em] underline decoration-2 underline-offset-4 sm:mt-4 sm:text-xl">
-                    Quero ver mais perfis
-                  </span>
-                </span>
-              </a>
-            </motion.li>
-          </AnimatePresence>
-        </ul>
-      )}
 
       <VideoDialog video={active} onClose={() => setActive(null)} />
     </>
@@ -200,75 +115,80 @@ function VideoCard({ item, onOpen }: { item: Item; onOpen: () => void }) {
     <button
       type="button"
       onClick={onOpen}
-      className="group @container relative block aspect-9/16 w-full overflow-hidden rounded-card border border-ink-line bg-ink-card text-left transition-[transform,border-color] duration-300 ease-out-expo hover:-translate-y-1.5 hover:border-rec/70 active:scale-[0.98]"
+      className="group block w-full rounded-card text-left"
     >
-      {item.capa ? (
-        <Image
-          src={item.capa}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 25vw, 50vw"
-          className="object-cover"
-        />
-      ) : item.arquivo ? (
-        <video
-          aria-hidden
-          tabIndex={-1}
-          muted
-          playsInline
-          preload="metadata"
-          src={`${item.arquivo}#t=0.5`}
-          className="pointer-events-none absolute inset-0 size-full object-cover"
-        />
-      ) : item.youtubeId ? (
-        <YouTubeThumb id={item.youtubeId} />
-      ) : (
-        <span
-          aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(90%_55%_at_50%_38%,rgba(255,59,48,0.16),transparent_70%),linear-gradient(180deg,#1d1d22,#0d0d0f)]"
-        >
-          <span className="absolute inset-x-0 top-[9%] text-center font-display text-[46cqw] font-black leading-none text-paper/4">
-            {String(item.id + 1).padStart(2, "0")}
-          </span>
-        </span>
-      )}
+      <span className="relative block aspect-9/16 overflow-hidden rounded-card bg-[#1c1c1c]">
+        {item.capa ? (
+          <Image
+            src={item.capa}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 20vw, 42vw"
+            className="object-cover"
+          />
+        ) : item.arquivo ? (
+          <video
+            aria-hidden
+            tabIndex={-1}
+            muted
+            playsInline
+            preload="metadata"
+            src={`${item.arquivo}#t=0.5`}
+            className="pointer-events-none absolute inset-0 size-full object-cover"
+          />
+        ) : item.youtubeId ? (
+          <YouTubeThumb id={item.youtubeId} />
+        ) : null}
 
-      <span
-        aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,13,15,0.35)_0%,transparent_28%,transparent_52%,rgba(13,13,15,0.92)_100%)]"
-      />
-
-      <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-ink/65 px-2.5 py-1.5 font-display text-[0.8rem] font-bold uppercase leading-none tracking-widest text-paper shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-md">
-        {TIPO_LABEL[item.tipo]}
-      </span>
-
-      <span
-        aria-hidden
-        className="absolute left-1/2 top-[44%] grid size-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-rec text-ink transition-transform duration-300 ease-out-expo group-hover:scale-110 sm:size-16"
-      >
-        <Play weight="fill" className="size-6 translate-x-px sm:size-7" />
-      </span>
-
-      <span className="absolute inset-x-3 bottom-3 block sm:inset-x-4 sm:bottom-4">
-        <span className="sr-only">
-          {hasMedia ? "Assistir vídeo: " : "Vídeo em breve: "}
-        </span>
-        {!hasMedia && (
+        {hasMedia ? (
           <span
             aria-hidden
-            className="mb-2 block font-display text-[0.8rem] font-bold uppercase leading-none tracking-widest text-flash"
+            className="absolute bottom-2.5 right-2.5 grid size-10 place-items-center rounded-full bg-ink/55 text-paper backdrop-blur-sm transition-colors duration-200 group-hover:bg-paper group-hover:text-ink"
           >
+            <Play weight="fill" className="size-4 translate-x-px" />
+          </span>
+        ) : (
+          <span className="absolute inset-0 grid place-items-center text-sm font-semibold text-paper/60">
             Em breve
           </span>
         )}
-        <span className="block font-display text-xl font-extrabold uppercase leading-none sm:text-2xl">
-          {item.titulo}
+      </span>
+
+      <span className="mt-3 block font-semibold leading-snug">
+        <span className="sr-only">
+          {hasMedia ? "Assistir vídeo: " : "Vídeo em breve: "}
         </span>
-        <span className="mt-1.5 block text-[0.8rem] leading-snug text-paper/70 sm:text-sm">
-          {item.subtitulo}
-        </span>
+        {item.titulo}
+      </span>
+      <span className="mt-1 block text-sm leading-snug text-paper/60">
+        {item.subtitulo}
       </span>
     </button>
+  );
+}
+
+// O último quadro de cada formato fica vazio: é o lugar do vídeo do cliente.
+function OpenSlot({ tipo, label }: { tipo: VideoTipo; label: string }) {
+  return (
+    <a
+      href={whatsappLink(formatoMensagem(tipo))}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-card"
+    >
+      <span className="flex aspect-9/16 flex-col items-center justify-center gap-3 rounded-card border-[1.5px] border-dashed border-paper/35 p-4 text-center transition-colors duration-200 group-hover:border-paper">
+        <Plus aria-hidden weight="bold" className="size-7" />
+        <span className="type-display text-[1.375rem] leading-[1.05]">
+          Sua marca aqui
+        </span>
+      </span>
+      <span className="mt-3 block font-semibold leading-snug underline decoration-paper/40 underline-offset-[0.2em] group-hover:decoration-paper">
+        {label}
+      </span>
+      <span className="mt-1 block text-sm leading-snug text-paper/60">
+        Abre o WhatsApp
+      </span>
+    </a>
   );
 }
 
@@ -330,25 +250,25 @@ function VideoDialog({
             <div className="min-w-0">
               <p
                 id="video-dialog-title"
-                className="truncate font-display text-2xl font-extrabold uppercase leading-none"
+                className="truncate text-lg font-semibold leading-tight"
               >
                 {video.titulo}
               </p>
-              <p className="mt-1.5 truncate text-sm text-paper/65">
-                {video.subtitulo}
+              <p className="mt-1 truncate text-sm text-paper/65">
+                {TIPO_LABEL[video.tipo]}, {video.subtitulo}
               </p>
             </div>
             <button
               type="button"
               aria-label="Fechar vídeo"
               onClick={onClose}
-              className="grid size-11 shrink-0 place-items-center rounded-full border border-paper/25 bg-ink-card text-paper transition-colors duration-300 hover:border-paper active:scale-[0.96]"
+              className="grid size-11 shrink-0 place-items-center rounded-full bg-paper/10 text-paper transition-colors duration-200 hover:bg-paper/20 active:scale-[0.96]"
             >
               <X weight="bold" className="size-5" />
             </button>
           </div>
 
-          <div className="relative aspect-9/16 w-full overflow-hidden rounded-card border border-ink-line bg-ink-card">
+          <div className="relative aspect-9/16 w-full overflow-hidden rounded-card bg-[#1c1c1c]">
             <VideoMedia key={video.id} video={video} />
           </div>
         </div>
@@ -365,9 +285,9 @@ function VideoMedia({ video }: { video: Item }) {
   if (!video.arquivo && !video.youtubeId) {
     return (
       <VideoNotice
-        icon={<FilmSlate aria-hidden weight="bold" className="size-9 text-rec" />}
-        title="Este take ainda não foi ao ar"
-        text="O exemplo deste perfil ainda não está publicado aqui. Peça pelo WhatsApp e enviamos para você."
+        icon={<FilmSlate aria-hidden weight="bold" className="size-8" />}
+        title="Este vídeo ainda não foi publicado"
+        text="O exemplo deste perfil ainda não está aqui. Peça pelo WhatsApp e enviamos para você."
         video={video}
       />
     );
@@ -376,10 +296,8 @@ function VideoMedia({ video }: { video: Item }) {
   if (status === "error") {
     return (
       <VideoNotice
-        icon={
-          <WarningCircle aria-hidden weight="bold" className="size-9 text-rec" />
-        }
-        title="Não deu para carregar o vídeo"
+        icon={<WarningCircle aria-hidden weight="bold" className="size-8" />}
+        title="O vídeo não carregou"
         text="Confira sua conexão e tente de novo, ou peça este exemplo pelo WhatsApp."
         video={video}
       />
@@ -417,14 +335,12 @@ function VideoMedia({ video }: { video: Item }) {
 
 function VideoSkeleton() {
   return (
-    <div aria-hidden className="absolute inset-0 overflow-hidden bg-ink-card">
+    <div aria-hidden className="absolute inset-0 overflow-hidden bg-[#1c1c1c]">
       <div className="absolute inset-x-5 bottom-8 space-y-3">
-        <div className="h-6 w-2/3 rounded-md bg-paper/10" />
-        <div className="h-4 w-1/2 rounded-md bg-paper/10" />
-        <div className="h-1.5 w-full rounded-full bg-paper/10" />
+        <div className="h-5 w-2/3 rounded bg-paper/10" />
+        <div className="h-4 w-1/2 rounded bg-paper/10" />
       </div>
-      <div className="absolute left-1/2 top-[44%] size-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-paper/10" />
-      <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(100deg,transparent_30%,rgba(245,242,236,0.09)_50%,transparent_70%)]" />
+      <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(100deg,transparent_30%,rgb(255_255_255/0.08)_50%,transparent_70%)]" />
     </div>
   );
 }
@@ -441,11 +357,9 @@ function VideoNotice({
   video: PortfolioVideo;
 }) {
   return (
-    <div className="absolute inset-0 flex flex-col items-start justify-end gap-4 bg-[radial-gradient(90%_55%_at_50%_30%,rgba(255,59,48,0.18),transparent_70%)] p-6 sm:p-8">
+    <div className="absolute inset-0 flex flex-col items-start justify-end gap-4 p-6 sm:p-8">
       {icon}
-      <p className="font-display text-4xl font-black uppercase leading-[0.95]">
-        {title}
-      </p>
+      <p className="type-display text-[1.875rem]">{title}</p>
       <p className="leading-relaxed text-paper/70">{text}</p>
       <ButtonLink href={whatsappLink(exampleMessage(video))} size="md">
         Pedir este exemplo

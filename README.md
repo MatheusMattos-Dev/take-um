@@ -1,7 +1,7 @@
 # Take Um
 
 Landing page de vendas da Take Um, produtora de vídeos verticais 9:16.
-Feita com Next.js 16, Tailwind CSS 4, Motion e Phosphor Icons.
+Feita com Next.js 16, Tailwind CSS 4 e Phosphor Icons.
 
 ## Rodar
 
@@ -17,15 +17,25 @@ Tudo o que muda com frequência está em [src/config/site.ts](src/config/site.ts
 
 1. `WHATSAPP_NUMBER`: número usado por todos os botões (55 + DDD + número).
 2. `CHECKOUT`: link de pagamento de cada plano. Vazio, o botão abre o WhatsApp.
-3. `HERO_VIDEOS`: os dois loops sem som dos celulares do topo (`public/hero/`).
+3. `HERO_VIDEO`: o loop sem som do topo (`public/hero/`). O título do site
+   aparece por cima dele como legenda, então use um vídeo sem legenda própria.
 4. `PORTFOLIO`: lista de vídeos. Cada item aceita `youtubeId` (YouTube Shorts)
    ou `arquivo` (um `.mp4` dentro de `public/`). Sem nenhum dos dois, o card
-   aparece como "Em breve".
+   aparece como "Em breve". O campo `tipo` define em qual formato (linha) o
+   vídeo aparece.
 5. `DEPOIMENTOS`: nome, foto, empresa e texto de cada cliente.
-6. `CONTATO`: e-mail e Instagram do rodapé.
+6. `PLANOS`: nome, quantidade de vídeos, preço por vídeo e itens de cada
+   pacote. O menor preço também aparece no topo do site.
+7. `CONTATO`: e-mail e Instagram do rodapé.
 
-Preços e planos ficam em [src/components/pricing.tsx](src/components/pricing.tsx)
-e as perguntas em [src/components/faq-list.tsx](src/components/faq-list.tsx).
+As perguntas ficam em [src/components/faq-list.tsx](src/components/faq-list.tsx).
+
+## Visual
+
+As cores e a fonte ficam em [src/app/globals.css](src/app/globals.css). A
+página é preta e branca, como o logotipo; a cor vem dos vídeos. O vermelho
+fica só no ponto e no botão principal, e o amarelo só na legenda do topo e no
+marcador dos depoimentos.
 
 ## Vídeos pesados
 

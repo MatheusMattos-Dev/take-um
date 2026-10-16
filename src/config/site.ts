@@ -15,35 +15,27 @@ export const WHATSAPP_NUMBER = "5555991693698";
 //   https://pay.wiapy.com/xzG2kHCjLwh7
 export const CHECKOUT = {
   unico: "",
-  pro: "",
-  escala: "",
+  pro: "https://pay.cakto.com.br/3982bro_1209048",
+  escala: "https://pay.cakto.com.br/34yq5yf_1209081",
 };
 
 // =====================================================================
-// 3) VÍDEOS DO TOPO (os dois celulares ao lado do título)
-// Loops curtos e sem som, dentro de /public/hero. Apague um item para o
-// celular voltar ao visual sem vídeo.
-// legenda: true mostra a legenda animada do site por cima; use false em
-//   vídeos que já têm legenda própria.
+// 3) VÍDEO DO TOPO
+// Loop curto e sem som, dentro de /public/hero. O título do site aparece
+// por cima dele como legenda, então use um vídeo SEM legenda própria.
+// capa: imagem mostrada enquanto o vídeo carrega (e para quem pediu menos
+//   movimento no sistema).
+// Outro loop pronto, mas com legenda própria: /hero/VIDEO-INICIAL-01.mp4
 // =====================================================================
 export type HeroVideoItem = {
   arquivo: string;
   capa?: string;
-  legenda?: boolean;
 };
 
-export const HERO_VIDEOS: HeroVideoItem[] = [
-  {
-    arquivo: "/hero/VIDEO-INICIAL.mp4",
-    capa: "/hero/VIDEO-INICIAL.jpg",
-    legenda: true,
-  },
-  {
-    arquivo: "/hero/VIDEO-INICIAL-01.mp4",
-    capa: "/hero/VIDEO-INICIAL-01.jpg",
-    legenda: false,
-  },
-];
+export const HERO_VIDEO: HeroVideoItem = {
+  arquivo: "/hero/VIDEO-INICIAL.mp4",
+  capa: "/hero/VIDEO-INICIAL.jpg",
+};
 
 // =====================================================================
 // 4) VÍDEOS DO PORTFÓLIO
@@ -205,7 +197,68 @@ export const DEPOIMENTOS: Depoimento[] = [
 ];
 
 // =====================================================================
-// 6) CONTATO (rodapé)
+// 6) PLANOS
+// price: preço por vídeo, em reais. videos: quantidade do pacote (vira os
+// quadrinhos 9:16 do card). O menor preço também aparece no topo do site.
+// featured: true destaca o plano com fundo preto e "Mais vendido".
+// O link de pagamento de cada plano fica em CHECKOUT, lá no item 2.
+// =====================================================================
+export type Plano = {
+  id: keyof typeof CHECKOUT;
+  name: string;
+  videos: number;
+  price: number;
+  featured: boolean;
+  features: string[];
+};
+
+export const PLANOS: Plano[] = [
+  {
+    id: "unico",
+    name: "Take Único",
+    videos: 1,
+    price: 129,
+    featured: false,
+    features: [
+      "Roteiro incluso",
+      "Ator, avatar ou 3D à escolha",
+      "Edição completa",
+      "Entrega em 48h",
+    ],
+  },
+  {
+    id: "pro",
+    name: "Take Pro",
+    videos: 5,
+    price: 109,
+    featured: true,
+    features: [
+      "Roteiro em todos os vídeos",
+      "Perfis diferentes no mesmo pacote",
+      "Legendas dinâmicas",
+      "Ganchos variados",
+      "Prioridade na produção",
+    ],
+  },
+  {
+    id: "escala",
+    name: "Take Escala",
+    videos: 10,
+    price: 97,
+    featured: false,
+    features: [
+      "Tudo do Take Pro",
+      "Variação de atores e roteiros",
+      "Ideal para lançamentos",
+      "Estratégia de ganchos para funil",
+    ],
+  },
+];
+
+export const MENOR_PRECO = Math.min(...PLANOS.map((plano) => plano.price));
+
+// =====================================================================
+// 7) CONTATO (rodapé)
 // =====================================================================
 export const CONTATO = {
   email: "takeum@gmail.com.br",
@@ -219,8 +272,7 @@ export const TIPO_LABEL: Record<VideoTipo, string> = {
 };
 
 export const NAV = [
-  { href: "#formatos", label: "Formatos" },
-  { href: "#portfolio", label: "Portfólio" },
+  { href: "#formatos", label: "Formatos e vídeos" },
   { href: "#como-funciona", label: "Como funciona" },
   { href: "#planos", label: "Planos" },
   { href: "#duvidas", label: "Dúvidas" },
@@ -229,9 +281,15 @@ export const NAV = [
 export const MENSAGENS = {
   padrao: "Olá! Quero criar um vídeo com a Take Um.",
   agenda: "Olá! Quero garantir um horário na agenda de gravação desta semana.",
-  perfis: "Olá! Quero ver mais perfis do elenco da Take Um.",
   duvida: "Olá! Tenho uma dúvida sobre os vídeos da Take Um.",
 };
+
+// Mensagem do espaço "Sua marca aqui" no fim de cada formato.
+export function formatoMensagem(tipo: VideoTipo) {
+  return tipo === "atores"
+    ? "Olá! Quero um vídeo com atores reais e ver mais perfis do elenco."
+    : `Olá! Quero um vídeo no formato ${TIPO_LABEL[tipo]}.`;
+}
 
 export function whatsappLink(mensagem: string = MENSAGENS.padrao) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;

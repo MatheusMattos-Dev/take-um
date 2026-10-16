@@ -1,67 +1,29 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
-  --font-display:
-    var(--font-barlow-condensed), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
-  --color-ink: #0d0d0f;
-  --color-ink-card: #17171b;
-  --color-ink-line: #2a2a30;
-  --color-paper: #f5f2ec;
-  --color-paper-dim: #e9e4da;
-  --color-rec: #ff3b30;
-  --color-flash: #ffb020;
+  /* Preto e branco do logotipo; a cor da página vem dos próprios vídeos. */
+  --color-paper: #ffffff;
+  --color-ink: #000000;
+  --color-mist: #efefef;
+  --color-graphite: #5c5c5c;
+  /* O ponto vermelho do logo: só no ponto e no botão principal. */
+  --color-rec: #ff2e22;
+  /* Amarelo das legendas: a palavra falada e o marcador dos depoimentos. */
+  --color-caption: #ffe81a;
   --color-whats: #25d366;
 
-  --radius-card: 14px;
+  --radius-frame: 1.125rem;
+  --radius-card: 0.875rem;
+  --radius-control: 0.625rem;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --animate-rec: rec-blink 1.4s ease-in-out infinite;
-  --animate-marquee: marquee 42s linear infinite;
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-rise: rise 0.9s var(--ease-out-expo) both;
   --animate-shimmer: shimmer 1.6s linear infinite;
-  --animate-ring: ring 2.8s ease-out infinite;
-  --animate-progress: progress 3.2s linear infinite;
-  --animate-like: like-pulse 2.6s var(--ease-out-expo) infinite;
-  --animate-heart: heart-rise 2.6s ease-out infinite;
-
-  @keyframes rec-blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.2;
-    }
-  }
-
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-  }
 
   @keyframes shimmer {
     from {
@@ -71,62 +33,31 @@
       transform: translateX(100%);
     }
   }
+}
 
-  @keyframes ring {
-    0% {
-      opacity: 0.55;
-      transform: scale(1);
-    }
-    70%,
-    100% {
-      opacity: 0;
-      transform: scale(1.7);
-    }
-  }
+/* Títulos: a Archivo larga e pesada, em caixa normal, como as legendas
+   queimadas nos vídeos verticais. */
+@utility type-display {
+  font-stretch: 125%;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
 
-  @keyframes progress {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
+@utility scrollbar-none {
+  scrollbar-width: none;
 
-  @keyframes like-pulse {
-    0%,
-    24%,
-    100% {
-      transform: scale(1);
-    }
-    8% {
-      transform: scale(1.35);
-    }
-    16% {
-      transform: scale(0.94);
-    }
-  }
-
-  @keyframes heart-rise {
-    0% {
-      opacity: 0;
-      transform: translate(0, 0) scale(0.5);
-    }
-    12% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-      transform: translate(var(--drift, 0), -430%) scale(1.15);
-    }
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
 @layer base {
   html {
-    background: var(--color-ink);
+    background: var(--color-paper);
     scroll-behavior: smooth;
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: 5rem;
     scrollbar-gutter: stable;
   }
 
@@ -135,56 +66,83 @@
   }
 
   ::selection {
-    background: var(--color-rec);
+    background: var(--color-caption);
     color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-rec);
+    outline: 2px solid currentColor;
     outline-offset: 3px;
   }
 }
 
-/* Legenda estilo Reels: a palavra ativa ganha fundo amarelo. A camada
-   destacada fica em ::after para animar só opacity. */
+/* ---------------------------------------------------------------------
+   Legenda do topo. O título entra palavra por palavra, uma vez, no ritmo
+   de um gancho de 3 segundos. Dentro do vídeo é legenda branca com
+   contorno e a palavra falada fica amarela; fora dele, texto preto.
+   --------------------------------------------------------------------- */
 .caption-word {
-  position: relative;
   display: inline-block;
-  padding: 0.04em 0.2em;
+  animation: word-in 0.36s var(--ease-pop) both;
+  animation-delay: calc(0.45s + var(--i, 0) * 0.27s);
 }
 
-.caption-word::after {
-  content: attr(data-word);
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 0.2em;
-  background: var(--color-flash);
-  color: var(--color-ink);
-  opacity: 0;
-  animation: caption-pop 3.2s linear infinite;
-  animation-delay: calc(var(--i, 0) * 0.42s);
+/* No celular o vídeo ocupa a tela toda, então o próprio título já é a
+   legenda. No desktop o título fica preto e uma cópia (.caption-live),
+   recortada na largura do vídeo, faz a parte de dentro. */
+.caption-live,
+.hero-title {
+  color: var(--color-paper);
+  -webkit-text-stroke: 0.11em var(--color-ink);
+  paint-order: stroke fill;
+  text-shadow: 0 0.07em 0 var(--color-ink);
 }
 
-@keyframes caption-pop {
-  0%,
-  17%,
-  100% {
+.caption-live .caption-word,
+.hero-title .caption-word {
+  animation:
+    word-in 0.36s var(--ease-pop) both,
+    word-spoken 0.27s linear;
+  animation-delay: calc(0.45s + var(--i, 0) * 0.27s);
+}
+
+@media (width >= 64rem) {
+  .hero-grid {
+    --frame-h: clamp(32rem, calc(100svh - 9.5rem), 52rem);
+    --frame-w: calc(var(--frame-h) * 9 / 16);
+    grid-template-columns: 1fr var(--frame-w) 1fr;
+    grid-template-rows: 1fr auto 0.62fr;
+    height: var(--frame-h);
+  }
+
+  .hero-title {
+    color: var(--color-ink);
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+  }
+
+  .hero-title .caption-word {
+    animation: word-in 0.36s var(--ease-pop) both;
+    animation-delay: calc(0.45s + var(--i, 0) * 0.27s);
+  }
+
+  .caption-live {
+    clip-path: inset(-50% calc((100% - var(--frame-w)) / 2));
+  }
+}
+
+@keyframes word-in {
+  from {
     opacity: 0;
-  }
-  2%,
-  14% {
-    opacity: 1;
+    transform: translateY(0.12em) scale(0.6);
   }
 }
 
-/* Malha de pontinhos: some devagar em cima, embaixo e nas laterais. */
-.dot-grid-fade {
-  mask-image:
-    linear-gradient(180deg, transparent, black 30%, black 70%, transparent),
-    linear-gradient(90deg, transparent, black 14%, black 86%, transparent);
-  mask-composite: intersect;
+@keyframes word-spoken {
+  from,
+  to {
+    color: var(--color-caption);
+  }
 }
 
 /* Banner do rodapé: as bordas se dissolvem no fundo, sem moldura. */
@@ -205,8 +163,7 @@
 }
 
 .video-dialog::backdrop {
-  background: rgb(13 13 15 / 0.88);
-  backdrop-filter: blur(6px);
+  background: rgb(0 0 0 / 0.9);
 }
 
 .video-dialog[open]::backdrop {
@@ -238,10 +195,5 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .caption-word[data-key]::after {
-    opacity: 1;
-    animation: none !important;
   }
 }

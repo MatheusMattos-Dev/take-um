@@ -1,6 +1,5 @@
 import { Check } from "@phosphor-icons/react/ssr";
-import { Reveal } from "@/components/ui/reveal";
-import { Section, SectionLabel, SectionTitle } from "@/components/ui/section";
+import { SectionTitle, container } from "@/components/ui/section";
 
 const ITEMS = [
   {
@@ -29,41 +28,40 @@ const ITEMS = [
   },
 ];
 
+// Continua no mesmo fundo de "Como funciona", separado só por um fio.
 export function Differentials() {
   return (
-    <Section tone="dark">
-      <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
-        <Reveal className="lg:sticky lg:top-28 lg:self-start">
-          <SectionLabel>Diferenciais</SectionLabel>
-          <SectionTitle>
-            Feito para <span className="text-rec">performar</span>, não só para
-            ficar bonito
+    <section className="bg-paper text-ink">
+      <div className={`${container} pb-20 sm:pb-24 lg:pb-32`}>
+        <div className="grid gap-10 border-t border-ink/10 pt-16 lg:grid-cols-[1.15fr_1.5fr] lg:gap-16 lg:pt-24">
+          <SectionTitle className="max-w-[15ch]">
+            Feito para vender, não só para ficar bonito
           </SectionTitle>
-        </Reveal>
 
-        <ul className="grid gap-x-10 border-b border-ink-line sm:grid-cols-2">
-          {ITEMS.map((item, index) => (
-            <Reveal
-              as="li"
-              key={item.title}
-              delay={(index % 2) * 0.08}
-              className="flex gap-4 border-t border-ink-line py-7"
-            >
-              <Check
-                aria-hidden
-                weight="bold"
-                className="mt-0.5 size-6 shrink-0 text-rec"
-              />
-              <div>
-                <h3 className="font-display text-[1.7rem] font-extrabold uppercase leading-none">
-                  {item.title}
-                </h3>
-                <p className="mt-2 leading-relaxed text-paper/65">{item.text}</p>
-              </div>
-            </Reveal>
-          ))}
-        </ul>
+          <ul className="grid gap-x-10 sm:grid-cols-2">
+            {ITEMS.map((item) => (
+              <li
+                key={item.title}
+                className="flex gap-3.5 border-t border-ink/10 py-6 first:border-t-0 first:pt-0 sm:[&:nth-child(2)]:border-t-0 sm:[&:nth-child(2)]:pt-0"
+              >
+                <Check
+                  aria-hidden
+                  weight="bold"
+                  className="mt-0.5 size-5 shrink-0"
+                />
+                <div>
+                  <h3 className="text-[1.1875rem] font-semibold leading-tight">
+                    {item.title}
+                  </h3>
+                  <p className="mt-1.5 leading-relaxed text-graphite">
+                    {item.text}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }

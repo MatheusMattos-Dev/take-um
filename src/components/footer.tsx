@@ -33,73 +33,61 @@ const CONTACTS = [
 // linha, contatos em ícones e a barra com o slogan.
 export function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden bg-ink text-paper">
-      {/* As mesmas linhas do topo fecham a página, subindo de baixo */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(245,242,236,0.045)_1px,transparent_1px)] bg-center bg-size-[72px_100%] mask-[linear-gradient(0deg,black_0%,black_30%,transparent_95%)] lg:bg-size-[120px_100%]"
-      />
+    <footer className="bg-ink text-paper">
+      <div className={container}>
+        <div className="grid gap-8 border-t border-paper/15 pb-10 pt-10 lg:grid-cols-[1.25fr_1.5fr_auto] lg:items-start lg:gap-12">
+          <div>
+            <Logo tone="paper" />
+            <p className="mt-3 max-w-[38ch] text-[0.9375rem] leading-relaxed text-paper/60">
+              Produtora de vídeos curtos verticais para anúncios e redes
+              sociais, com atores reais, avatar IA e animação 3D.
+            </p>
+          </div>
 
-      <div
-        className={`${container} grid gap-8 pb-10 pt-2 lg:grid-cols-[1.25fr_1.5fr_auto] lg:items-start lg:gap-12 lg:pb-12`}
-      >
-        <div>
-          <Logo />
-          <p className="mt-3 max-w-[38ch] text-[0.95rem] leading-relaxed text-paper/60">
-            Produtora de vídeos curtos verticais para anúncios e redes
-            sociais, com atores reais, avatar IA e animação 3D.
-          </p>
-        </div>
-
-        <nav aria-label="Rodapé" className="lg:pt-1.5">
-          <ul className="flex flex-wrap gap-x-7">
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  className="group inline-flex min-h-11 items-center font-medium text-paper/80 transition-colors duration-300 hover:text-paper lg:min-h-9"
-                >
-                  <span className="bg-[linear-gradient(currentColor,currentColor)] bg-size-[0%_1px] bg-bottom-left bg-no-repeat transition-[background-size] duration-300 ease-out-expo group-hover:bg-size-[100%_1px]">
+          <nav aria-label="Rodapé" className="lg:pt-1.5">
+            <ul className="flex flex-wrap gap-x-7">
+              {NAV.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className="inline-flex min-h-11 items-center font-medium text-paper/80 underline-offset-[0.3em] transition-colors duration-200 hover:text-paper hover:underline lg:min-h-9"
+                  >
                     {item.label}
-                  </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <ul className="flex gap-2.5">
+            {CONTACTS.map((contact) => (
+              <li key={contact.label}>
+                <a
+                  href={contact.href}
+                  target={contact.external ? "_blank" : undefined}
+                  rel={contact.external ? "noopener noreferrer" : undefined}
+                  aria-label={contact.label}
+                  title={contact.label}
+                  className="grid size-11 place-items-center rounded-full bg-paper/10 text-paper transition-colors duration-200 hover:bg-paper/20 active:scale-[0.96]"
+                >
+                  <contact.icon aria-hidden weight="bold" className="size-5" />
                 </a>
               </li>
             ))}
           </ul>
-        </nav>
+        </div>
 
-        <ul className="flex gap-2.5">
-          {CONTACTS.map((contact) => (
-            <li key={contact.label}>
-              <a
-                href={contact.href}
-                target={contact.external ? "_blank" : undefined}
-                rel={contact.external ? "noopener noreferrer" : undefined}
-                aria-label={contact.label}
-                title={contact.label}
-                className="grid size-11 place-items-center rounded-full border border-paper/20 text-paper/85 transition-[transform,border-color,color] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-paper hover:text-paper active:scale-[0.96]"
-              >
-                <contact.icon aria-hidden weight="bold" className="size-5" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className={container}>
-        <div className="flex flex-col gap-4 border-t border-ink-line pb-8 pt-7 sm:flex-row sm:items-center sm:justify-between sm:pr-24 lg:pr-28">
-          <p className="font-display text-[2rem] font-black uppercase leading-none sm:order-2 sm:text-2xl">
-            Um take. <span className="text-rec">Uma venda.</span>
+        <div className="flex flex-col gap-4 border-t border-paper/15 pb-8 pt-7 sm:flex-row sm:items-center sm:justify-between sm:pr-24 lg:pr-28">
+          <p className="type-display text-[1.75rem] sm:order-2 sm:text-[1.375rem]">
+            Um take. Uma venda.
           </p>
           <p className="text-sm text-paper/60 sm:order-1">© 2026 Take Um</p>
           <a
             href="#topo"
-            className="group inline-flex min-h-11 items-center gap-3 self-start font-display text-[1.05rem] font-extrabold uppercase leading-none tracking-[0.04em] text-paper/80 transition-colors duration-300 hover:text-paper sm:order-3 sm:self-auto"
+            className="inline-flex min-h-11 items-center gap-2.5 self-start font-semibold text-paper/80 transition-colors duration-200 hover:text-paper sm:order-3 sm:self-auto"
           >
             Voltar ao topo
-            <span className="grid size-9 place-items-center rounded-full border border-paper/25 transition-[transform,border-color] duration-300 ease-out-expo group-hover:-translate-y-1 group-hover:border-paper">
-              <ArrowUp aria-hidden weight="bold" className="size-4" />
-            </span>
+            <ArrowUp aria-hidden weight="bold" className="size-4" />
           </a>
         </div>
       </div>

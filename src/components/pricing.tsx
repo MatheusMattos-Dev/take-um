@@ -1,114 +1,81 @@
-import { Check, WhatsappLogo } from "@phosphor-icons/react/ssr";
-import { CHECKOUT, whatsappLink } from "@/config/site";
+import { Check, CreditCard, WhatsappLogo } from "@phosphor-icons/react/ssr";
+import { CHECKOUT, PLANOS, whatsappLink, type Plano } from "@/config/site";
 import { ButtonLink } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
-import { Section, SectionLabel, SectionTitle } from "@/components/ui/section";
+import { Section, SectionTitle } from "@/components/ui/section";
 
-const PLANS = [
-  {
-    id: "unico",
-    name: "Take Único",
-    quantity: "1 vídeo",
-    price: 129,
-    total: "R$ 129 no total",
-    featured: false,
-    features: [
-      "Roteiro incluso",
-      "Ator, avatar ou 3D à escolha",
-      "Edição completa",
-      "Entrega em 48h",
-    ],
-  },
-  {
-    id: "pro",
-    name: "Take Pro",
-    quantity: "5 vídeos",
-    price: 109,
-    total: "R$ 545 no total",
-    featured: true,
-    features: [
-      "Roteiro em todos os vídeos",
-      "Perfis diferentes no mesmo pacote",
-      "Legendas dinâmicas",
-      "Ganchos variados",
-      "Prioridade na produção",
-    ],
-  },
-  {
-    id: "escala",
-    name: "Take Escala",
-    quantity: "10 vídeos",
-    price: 97,
-    total: "R$ 970 no total",
-    featured: false,
-    features: [
-      "Tudo do Take Pro",
-      "Variação de atores e roteiros",
-      "Ideal para lançamentos",
-      "Estratégia de ganchos para funil",
-    ],
-  },
-] as const;
+const quantity = (plan: Plano) =>
+  plan.videos === 1 ? "1 vídeo" : `${plan.videos} vídeos`;
 
-function planMessage(plan: (typeof PLANS)[number]) {
-  return `Olá! Quero o pacote ${plan.name.toUpperCase()}: ${plan.quantity}, R$ ${plan.price} por vídeo (${plan.total}).`;
+const total = (plan: Plano) =>
+  (plan.price * plan.videos).toLocaleString("pt-BR");
+
+function planMessage(plan: Plano) {
+  return `Olá! Quero o pacote ${plan.name.toUpperCase()}: ${quantity(plan)}, R$ ${plan.price} por vídeo (R$ ${total(plan)} no total).`;
 }
 
 export function Pricing() {
   return (
-    <Section id="planos" tone="light">
-      <Reveal>
-        <SectionLabel tone="light">Planos</SectionLabel>
-        <SectionTitle className="max-w-[18ch]">
-          Escolha o pacote ideal para sua empresa
+    <Section id="planos" tone="mist">
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-12">
+        <SectionTitle className="max-w-[19ch]">
+          Quanto mais vídeos, menor o preço de cada um
         </SectionTitle>
-      </Reveal>
+        <p className="max-w-[40ch] text-[1.0625rem] leading-relaxed text-graphite lg:justify-self-end">
+          Todos os vídeos são entregues completos e editados, prontos para
+          publicar.
+        </p>
+      </div>
 
-      <ul className="mt-12 grid gap-7 lg:mt-14 lg:grid-cols-[1fr_1.14fr_1fr] lg:items-center lg:gap-5">
-        {PLANS.map((plan, index) => (
-          <Reveal as="li" key={plan.name} delay={index * 0.08}>
+      <ul className="mt-12 grid gap-4 lg:mt-16 lg:grid-cols-3">
+        {PLANOS.map((plan) => (
+          <li key={plan.id}>
             <article
-              className={`relative flex flex-col rounded-card transition-transform duration-300 ease-out-expo hover:-translate-y-1.5 ${
-                plan.featured
-                  ? "border-2 border-rec bg-ink-card p-8 text-paper shadow-[0_34px_60px_-34px_rgba(13,13,15,0.7)] lg:p-11"
-                  : "bg-paper-dim p-7 text-ink lg:p-9"
+              className={`flex h-full flex-col rounded-card p-7 lg:p-9 ${
+                plan.featured ? "bg-ink text-paper" : "bg-paper text-ink"
               }`}
             >
-              {plan.featured && (
-                <p className="absolute -top-3.5 left-8 rounded-full bg-flash px-3.5 py-1.5 font-display text-[0.95rem] font-extrabold uppercase leading-none tracking-widest text-ink lg:left-11">
-                  Mais vendido
-                </p>
-              )}
+              <div className="flex items-baseline justify-between gap-4">
+                <h3 className="type-display text-[1.875rem]">{plan.name}</h3>
+                {plan.featured && (
+                  <p className="text-sm font-semibold text-paper/70">
+                    Mais vendido
+                  </p>
+                )}
+              </div>
 
-              <h3 className="font-display text-[2.25rem] font-black uppercase leading-none">
-                {plan.name}
-              </h3>
-              <p className="mt-2 font-display text-lg font-bold uppercase leading-none tracking-[0.14em] opacity-60">
-                {plan.quantity}
-              </p>
+              {/* um quadrinho 9:16 para cada vídeo do pacote */}
+              <div className="mt-5 flex items-center gap-3">
+                <span aria-hidden className="flex gap-[3px]">
+                  {Array.from({ length: plan.videos }, (_, index) => (
+                    <span
+                      key={index}
+                      className="h-4 w-[9px] rounded-[2px] bg-current"
+                    />
+                  ))}
+                </span>
+                <span className="text-sm font-semibold">{quantity(plan)}</span>
+              </div>
 
-              <p className="mt-7 flex items-end gap-2 lg:mt-9">
-                <span className="pb-1.5 font-display text-2xl font-extrabold leading-none">
+              <p className="mt-9 flex items-end gap-2">
+                <span className="pb-2 text-xl font-semibold leading-none">
                   R$
                 </span>
-                <span
-                  className={`font-display font-black leading-[0.78] ${
-                    plan.featured ? "text-[7rem]" : "text-[6rem]"
-                  }`}
-                >
+                <span className="type-display text-[5.25rem] leading-[0.78]">
                   {plan.price}
                 </span>
-                <span className="pb-1 text-sm leading-tight opacity-65">
+                <span className="pb-0.5 text-sm leading-tight opacity-70">
                   por
                   <br />
                   vídeo
                 </span>
               </p>
-              <p className="mt-4 text-sm font-medium opacity-65">{plan.total}</p>
+              <p className="mt-4 text-sm opacity-70">
+                R$ {total(plan)} no total
+              </p>
 
               <ul
-                className={`mt-6 space-y-3 border-t pt-6 lg:mt-8 lg:space-y-3.5 lg:pt-7 ${
-                  plan.featured ? "border-ink-line" : "border-ink/15"
+                className={`mt-7 space-y-3 border-t pt-6 ${
+                  plan.featured ? "border-paper/15" : "border-ink/10"
                 }`}
               >
                 {plan.features.map((feature) => (
@@ -116,34 +83,40 @@ export function Pricing() {
                     <Check
                       aria-hidden
                       weight="bold"
-                      className={`mt-0.5 size-5 shrink-0 ${
-                        plan.featured ? "text-rec" : "text-ink"
-                      }`}
+                      className="mt-0.5 size-[1.125rem] shrink-0"
                     />
                     {feature}
                   </li>
                 ))}
               </ul>
 
-              <ButtonLink
-                href={CHECKOUT[plan.id] || whatsappLink(planMessage(plan))}
-                variant={plan.featured ? "rec" : "ink"}
-                className="mt-7 w-full lg:mt-9"
-              >
-                <WhatsappLogo aria-hidden weight="fill" className="size-6" />
-                Quero o {plan.name}
-              </ButtonLink>
+              <div className="mt-auto pt-8">
+                {/* com link de checkout o botão vai direto para o pagamento;
+                    sem link, abre o WhatsApp com o pacote já escrito */}
+                {CHECKOUT[plan.id] ? (
+                  <ButtonLink
+                    href={CHECKOUT[plan.id]}
+                    variant={plan.featured ? "rec" : "ink"}
+                    className="w-full"
+                  >
+                    <CreditCard aria-hidden weight="fill" className="size-6" />
+                    Comprar o {plan.name}
+                  </ButtonLink>
+                ) : (
+                  <ButtonLink
+                    href={whatsappLink(planMessage(plan))}
+                    variant={plan.featured ? "rec" : "ink"}
+                    className="w-full"
+                  >
+                    <WhatsappLogo aria-hidden weight="fill" className="size-6" />
+                    Pedir o {plan.name}
+                  </ButtonLink>
+                )}
+              </div>
             </article>
-          </Reveal>
+          </li>
         ))}
       </ul>
-
-      <Reveal>
-        <p className="mt-10 max-w-[60ch] leading-relaxed text-ink/70">
-          Todos os vídeos são entregues completos e editados, prontos para
-          publicação.
-        </p>
-      </Reveal>
     </Section>
   );
 }

@@ -1,4 +1,3 @@
-import { FilmSlate } from "@phosphor-icons/react/ssr";
 import { MENSAGENS, whatsappLink } from "@/config/site";
 import { container } from "@/components/ui/section";
 
@@ -8,19 +7,22 @@ export function AnnouncementBar() {
       href={whatsappLink(MENSAGENS.agenda)}
       target="_blank"
       rel="noopener noreferrer"
-      className="block bg-rec text-ink focus-visible:outline-ink focus-visible:-outline-offset-4"
+      className="block bg-ink text-paper focus-visible:-outline-offset-4"
     >
       <span
-        className={`${container} flex min-h-11 items-center justify-center gap-2 py-2 text-center text-[0.8125rem] font-semibold leading-snug sm:gap-2.5 sm:text-sm`}
+        className={`${container} flex min-h-10 items-center justify-center gap-2.5 py-2 text-center text-[0.875rem] leading-snug`}
       >
-        <FilmSlate aria-hidden weight="fill" className="size-[1.1rem] shrink-0" />
+        <span aria-hidden className="size-2 shrink-0 rounded-full bg-rec" />
         {/* versão curta no celular, para caber em uma linha */}
         <span className="sm:hidden">
-          Agenda da semana aberta: garanta seu horário
+          Agenda desta semana aberta.{" "}
+          <span className="underline underline-offset-2">Garanta seu horário</span>
         </span>
         <span className="hidden sm:inline">
-          Agenda de gravação desta semana aberta: chame no WhatsApp e garanta
-          seu horário
+          Agenda de gravação desta semana aberta.{" "}
+          <span className="underline underline-offset-2">
+            Garanta seu horário no WhatsApp
+          </span>
         </span>
       </span>
     </a>

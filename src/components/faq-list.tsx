@@ -37,7 +37,7 @@ export function FaqList() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="divide-y divide-ink/15 border-y border-ink/15">
+    <div className="divide-y divide-ink/10 border-b border-ink/10">
       {QUESTIONS.map((item, index) => {
         const open = index === openIndex;
 
@@ -50,15 +50,15 @@ export function FaqList() {
                 aria-expanded={open}
                 aria-controls={`faq-resposta-${index}`}
                 onClick={() => setOpenIndex(open ? null : index)}
-                className="group flex w-full items-center justify-between gap-6 py-6 text-left"
+                className="group flex w-full items-center justify-between gap-6 py-5 text-left sm:py-6"
               >
-                <span className="font-display text-[1.7rem] font-extrabold uppercase leading-none transition-transform duration-300 ease-out-expo group-hover:translate-x-1 sm:text-3xl">
+                <span className="text-[1.1875rem] font-semibold leading-snug underline-offset-[0.2em] group-hover:underline sm:text-[1.375rem]">
                   {item.question}
                 </span>
                 <Plus
                   aria-hidden
                   weight="bold"
-                  className={`size-7 shrink-0 text-rec transition-transform duration-300 ease-out-expo ${
+                  className={`size-6 shrink-0 transition-transform duration-300 ease-out-expo ${
                     open ? "rotate-45" : ""
                   }`}
                 />
@@ -74,7 +74,7 @@ export function FaqList() {
               }`}
             >
               <div className="overflow-hidden">
-                <p className="max-w-[58ch] pb-7 text-lg leading-relaxed text-ink/75">
+                <p className="max-w-[58ch] pb-6 text-[1.0625rem] leading-relaxed text-graphite sm:pb-7">
                   {item.answer}
                 </p>
               </div>
