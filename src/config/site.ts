@@ -14,7 +14,7 @@ export const WHATSAPP_NUMBER = "5555991693698";
 // Checkout do Take Único, guardado para quando voltar a ser usado:
 //   https://pay.wiapy.com/xzG2kHCjLwh7
 export const CHECKOUT = {
-  unico: "",
+  unico: "https://pay.cakto.com.br/ezscwrd_1208982",
   pro: "https://pay.cakto.com.br/3982bro_1209048",
   escala: "https://pay.cakto.com.br/34yq5yf_1209081",
 };

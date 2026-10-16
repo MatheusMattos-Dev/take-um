@@ -1,4 +1,4 @@
-import { Check, WhatsappLogo } from "@phosphor-icons/react/ssr";
+import { Check, CreditCard, WhatsappLogo } from "@phosphor-icons/react/ssr";
 import { CHECKOUT, whatsappLink } from "@/config/site";
 import { ButtonLink } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
@@ -130,7 +130,13 @@ export function Pricing() {
                 variant={plan.featured ? "rec" : "ink"}
                 className="mt-7 w-full lg:mt-9"
               >
-                <WhatsappLogo aria-hidden weight="fill" className="size-6" />
+                {/* cartão quando vai para o pagamento; WhatsApp se o plano
+                    ficar sem link de checkout */}
+                {CHECKOUT[plan.id] ? (
+                  <CreditCard aria-hidden weight="fill" className="size-6" />
+                ) : (
+                  <WhatsappLogo aria-hidden weight="fill" className="size-6" />
+                )}
                 Quero o {plan.name}
               </ButtonLink>
             </article>
