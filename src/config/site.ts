@@ -15,8 +15,8 @@ export const WHATSAPP_NUMBER = "5555991693698";
 //   https://pay.wiapy.com/xzG2kHCjLwh7
 export const CHECKOUT = {
   unico: "",
-  pro: "",
-  escala: "",
+  pro: "https://pay.cakto.com.br/3982bro_1209048",
+  escala: "https://pay.cakto.com.br/34yq5yf_1209081",
 };
 
 // =====================================================================
