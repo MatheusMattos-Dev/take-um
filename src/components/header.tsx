@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import { List, X } from "@phosphor-icons/react";
-import { NAV, whatsappLink } from "@/config/site";
+import { CHECKOUT, NAV } from "@/config/site";
 import { ButtonLink } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { container } from "@/components/ui/section";
 
-const CTA_MESSAGE = "Olá! Quero meu vídeo com a Take Um.";
+// "Quero meu vídeo" leva direto ao checkout do Take Único; sem link de
+// checkout, desce até os planos.
+const CTA_HREF = CHECKOUT.unico || "#planos";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -62,7 +64,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <div className="hidden sm:block">
-            <ButtonLink href={whatsappLink(CTA_MESSAGE)} size="md">
+            <ButtonLink href={CTA_HREF} size="md">
               Quero meu vídeo
             </ButtonLink>
           </div>
@@ -99,7 +101,11 @@ export function Header() {
             ))}
           </ul>
           <div className="mt-5 sm:hidden">
-            <ButtonLink href={whatsappLink(CTA_MESSAGE)} className="w-full">
+            <ButtonLink
+              href={CTA_HREF}
+              onClick={() => setOpen(false)}
+              className="w-full"
+            >
               Quero meu vídeo
             </ButtonLink>
           </div>

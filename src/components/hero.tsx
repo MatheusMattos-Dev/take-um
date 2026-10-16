@@ -5,9 +5,8 @@ import {
   Heart,
   MusicNotes,
   PaperPlaneTilt,
-  WhatsappLogo,
 } from "@phosphor-icons/react/ssr";
-import { HERO_VIDEOS, whatsappLink, type HeroVideoItem } from "@/config/site";
+import { HERO_VIDEOS, type HeroVideoItem } from "@/config/site";
 import { HeroVideo } from "@/components/hero-video";
 import { ButtonLink } from "@/components/ui/button";
 import { RecDot } from "@/components/ui/rec-dot";
@@ -68,8 +67,7 @@ export function Hero() {
           </p>
 
           <div className="mt-6 flex animate-rise flex-col gap-3 [animation-delay:240ms] sm:flex-row lg:mt-9">
-            <ButtonLink href={whatsappLink()} data-hero-cta>
-              <WhatsappLogo aria-hidden weight="fill" className="size-6" />
+            <ButtonLink href="#planos" data-hero-cta>
               Quero criar meu vídeo
             </ButtonLink>
             <ButtonLink href="#planos" variant="outline-dark">
